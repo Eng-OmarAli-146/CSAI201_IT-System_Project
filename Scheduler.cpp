@@ -57,7 +57,7 @@ void Scheduler::AssignTicket(Ticket* t, Technician* tech, int currentTime)
     t->setST(currentTime);
     t->setFT(currentTime + duration);
     t->setTID(tech->getID());
-    t->setStatus(IN_SERVICE);
+    t->setStatus(TicketStatus::IN_SERVICE);
 
     tech->assignTicket(t);
     inService->insert(t);

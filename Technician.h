@@ -1,3 +1,4 @@
+#pragma once
 #include "Definitions.h"
 #include "Ticket.h"
 class Technician {

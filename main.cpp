@@ -5,7 +5,8 @@
 int main()
 {
     InputReader reader;
-    reader.LoadFile();
+    if (!reader.LoadFile())
+        return 1;
 
     int mode;
     std::cout << "1) Interactive  2) Silent : ";

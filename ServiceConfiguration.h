@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 class ServiceConfiguration {
 private:
@@ -11,4 +12,3 @@ public:
     const std::string& getCategory() const;
     int getDuration() const;
 };
-

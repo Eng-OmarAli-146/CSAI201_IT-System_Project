@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 class Location {
 private:
@@ -9,4 +10,3 @@ public:
     int getID() const;
     const std::string& getName() const;
 };
-

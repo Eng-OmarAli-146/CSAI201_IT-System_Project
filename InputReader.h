@@ -1,7 +1,10 @@
+#pragma once
 #include <iosfwd>
 #include <string>
 #include <utility>
 #include <vector>
+#include "Definitions.h"
+#include "CancellationManager.h"   // CancellationRequest
 #include "LocationManager.h"
 #include "ProblemConfigurationQueue.h"
 #include "TechnicianQueue.h"
@@ -12,8 +15,8 @@ private:
     LocationManager locations;
     ProblemConfigurationQueue configurations;
     TechnicianQueue technicians;
-    std::vector<Ticket> requests;
-    std::vector<std::pair<int, int>> cancellations; // {time, RID}
+    std::vector<Ticket> allRequests;
+    std::vector<std::pair<int, int>> allCancellations; // {time, RID}
     static RequestType parseRequestType(const std::string& value);
     static TechnicianType parseTechnicianType(const std::string& value);
 public:
@@ -25,9 +28,8 @@ public:
     bool LoadRequests(std::istream& input);
     bool LoadCancellations(std::istream& input);
     const LocationManager& getLocations() const;
-    const ProblemConfigurationQueue& getConfigurations() const;
-    const TechnicianQueue& getTechnicians() const;
-    std::vector<Ticket>& getRequests();
-    const std::vector<Ticket>& getRequests() const;
-    const std::vector<std::pair<int, int>>& getCancellations() const;
+    ProblemConfigurationQueue* getConfigurations();
+    std::vector<Technician*> getTechnicians();
+    std::vector<Ticket*> getAllRequests();
+    std::vector<CancellationRequest> getAllCancellations();
 };

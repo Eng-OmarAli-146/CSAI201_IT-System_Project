@@ -1,12 +1,13 @@
+#pragma once
+#include <string>
 #include <vector>
-#include "ServiceConfiguration.h"
-class ProblemConfigurationQueue {
+#include "Location.h"
+class LocationManager {
 private:
-    std::vector<ServiceConfiguration> configurations;
+    std::vector<Location> locations;
 public:
-    void insertConfiguration(const ServiceConfiguration& configuration);
-    const ServiceConfiguration* getConfigurationByPC(int pc) const;
-    int getDuration(int pc) const;
-    std::string getCategory(int pc) const;
+    void addLocation(const Location& location);
+    const Location* getLocation(int id) const;
+    std::string getLocationName(int id) const;
     int size() const;
 };
