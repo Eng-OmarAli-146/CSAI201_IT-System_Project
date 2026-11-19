@@ -69,7 +69,7 @@ bool InputReader::LoadRequests(std::istream& input) {
         int rid, qt, lid, pc, pr;
         std::string type;
         if (!(input >> rid >> qt >> lid >> pc >> pr >> type)) return false;
-        requests.emplace_back(rid, qt, lid, pc, pr, parseRequestType(type));
+        allRequests.emplace_back(rid, qt, lid, pc, pr, parseRequestType(type));
     }
     return true;
 }
@@ -80,14 +80,30 @@ bool InputReader::LoadCancellations(std::istream& input) {
     for (int i = 0; i < count; ++i) {
         int time, rid;
         if (!(input >> time >> rid)) return false;
-        cancellations.emplace_back(time, rid);
+        allCancellations.emplace_back(time, rid);
     }
     return true;
 }
 const LocationManager& InputReader::getLocations() const { return locations; }
-const ProblemConfigurationQueue& InputReader::getConfigurations() const { return configurations; }
-const TechnicianQueue& InputReader::getTechnicians() const { return technicians; }
-std::vector<Ticket>& InputReader::getRequests() { return requests; }
-const std::vector<Ticket>& InputReader::getRequests() const { return requests; }
-const std::vector<std::pair<int, int>>& InputReader::getCancellations() const { return cancellations; }
+ProblemConfigurationQueue* InputReader::getConfigurations() { return &configurations; }
+std::vector<Technician*> InputReader::getTechnicians() { return technicians.getAllTechnicians(); }
+std::vector<Ticket*> InputReader::getAllRequests() {
+    // the tickets are stored by value inside allRequests, which is fully loaded
+    // at this point, so pointers to its elements stay valid during the simulation
+    std::vector<Ticket*> result;
+    result.reserve(allRequests.size());
+    for (auto& ticket : allRequests) result.push_back(&ticket);
+    return result;
+}
+std::vector<CancellationRequest> InputReader::getAllCancellations() {
+    std::vector<CancellationRequest> result;
+    result.reserve(allCancellations.size());
+    for (const auto& cancellation : allCancellations) {
+        CancellationRequest request;
+        request.CT  = cancellation.first;
+        request.RID = cancellation.second;
+        result.push_back(request);
+    }
+    return result;
+}
 

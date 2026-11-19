@@ -13,12 +13,13 @@ Simulation::Simulation(std::vector<Ticket*> requests,
       nextRequest(0), nextCancel(0),
       scheduler(&waitingNR, &waitingSR, &waitingUR, &inService,
                 &availableGT, &availableST, configs),
-      cancelManager(&waitingNR, &inService, &availableGT, &technicians, &cancelled)
+      cancelManager(&waitingNR, &inService, &availableGT, &availableST,
+                    &technicians, &cancelled)
 {
     // fill the available queues
     for (size_t i = 0; i < technicians.size(); i++)
     {
-        if (technicians[i]->getType() == GT)
+        if (technicians[i]->getType() == TechnicianType::GT)
             availableGT.insertGT(technicians[i]);
         else
             availableST.insertST(technicians[i]);
@@ -46,10 +47,10 @@ void Simulation::Run()
 
 void Simulation::CompleteServices()
 {
-    while (!inService.isEmpty() && inService.peek()->getFT() == CurrentTime)
+    while (!inService.isEmpty() && inService.peek()->getFT() <= CurrentTime)
     {
         Ticket* t = inService.removeFirst();
-        t->setStatus(COMPLETED);
+        t->setStatus(TicketStatus::COMPLETED);
         completed.push_back(t);
 
         for (size_t i = 0; i < technicians.size(); i++)
@@ -59,7 +60,7 @@ void Simulation::CompleteServices()
             {
                 tech->addBusyTime(t->getFT() - t->getST());
                 tech->releaseTicket();
-                if (tech->getType() == GT)
+                if (tech->getType() == TechnicianType::GT)
                     availableGT.returnGT(tech);
                 else
                     availableST.returnST(tech);
@@ -75,10 +76,10 @@ void Simulation::ReleaseRequests()
            allRequests[nextRequest]->getQT() == CurrentTime)
     {
         Ticket* t = allRequests[nextRequest++];
-        t->setStatus(WAITING);
+        t->setStatus(TicketStatus::WAITING);
 
-        if (t->getType() == NR)       waitingNR.enqueue(t);
-        else if (t->getType() == SR)  waitingSR.enqueue(t);
+        if (t->getType() == RequestType::NR)       waitingNR.enqueue(t);
+        else if (t->getType() == RequestType::SR)  waitingSR.enqueue(t);
         else                          waitingUR.insert(t);
     }
 }

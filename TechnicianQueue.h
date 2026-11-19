@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include "Technician.h"
 class TechnicianQueue {
@@ -7,8 +8,8 @@ public:
     void insertTechnician(const Technician& technician);
     Technician* getTechnicianByID(int id);
     const Technician* getTechnicianByID(int id) const;
+    std::vector<Technician*> getAllTechnicians();
     bool updateTechnician(int id, const Technician& technician);
     void printWorkingTechnicians() const;
     int size() const;
 };
-

@@ -1,3 +1,4 @@
+#pragma once
 #include "Definitions.h"
 class Ticket {
 private:

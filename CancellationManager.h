@@ -5,6 +5,7 @@
 #include "WaitingNRQueue.h"
 #include "InServiceList.h"
 #include "AvailableGTQueue.h"
+#include "AvailableSTQueue.h"
 
 struct CancellationRequest
 {
@@ -17,13 +18,15 @@ class CancellationManager
     WaitingNRQueue*           waitingNR;
     InServiceList*            inService;
     AvailableGTQueue*         availableGT;
+    AvailableSTQueue*         availableST;
     std::vector<Technician*>* technicians;
     std::vector<Ticket*>*     cancelled;
 
 public:
     CancellationManager(WaitingNRQueue* w, InServiceList* s, AvailableGTQueue* g,
-                        std::vector<Technician*>* t, std::vector<Ticket*>* c)
-        : waitingNR(w), inService(s), availableGT(g), technicians(t), cancelled(c) {}
+                        AvailableSTQueue* st, std::vector<Technician*>* t, std::vector<Ticket*>* c)
+        : waitingNR(w), inService(s), availableGT(g), availableST(st),
+          technicians(t), cancelled(c) {}
 
     bool CancelTicket(int RID);
     bool CancelWaitingNR(int RID);
