@@ -1,51 +1,66 @@
 #include "WaitingSRQueue.h"
 #include <iostream>
 
+WaitingSRQueue::WaitingSRQueue() : head(nullptr), tail(nullptr), count(0) {}
+
 void WaitingSRQueue::enqueue(Ticket* t)
 {
-    items.push(t);
+    Node* node = new Node;
+    node->data = t;
+    node->next = nullptr;
+
+    if (tail == nullptr)
+    {
+        head = node;
+        tail = node;
+    }
+    else
+    {
+        tail->next = node;
+        tail = node;
+    }
+    count++;
 }
 
 Ticket* WaitingSRQueue::dequeue()
 {
-    if (items.empty()) return nullptr;
-    Ticket* t = items.front();
-    items.pop();
+    if (head == nullptr) return nullptr;
+
+    Node* node = head;
+    Ticket* t = node->data;
+
+    head = head->next;
+    if (head == nullptr) tail = nullptr;
+
+    delete node;
+    count--;
     return t;
 }
 
-Ticket* WaitingSRQueue::peek()
+Ticket* WaitingSRQueue::peek() const
 {
-    if (items.empty()) return nullptr;
-    return items.front();
+    if (head == nullptr) return nullptr;
+    return head->data;
 }
 
-bool WaitingSRQueue::isEmpty()  { return items.empty(); }
-int  WaitingSRQueue::getCount() { return items.size(); }
+bool WaitingSRQueue::isEmpty() const { return count == 0; }
 
-std::string WaitingSRQueue::getIDs()
+int WaitingSRQueue::getCount() const { return count; }
+
+void WaitingSRQueue::printIDs() const
 {
-    // a std::queue can't be looped over, so we copy it first
-    std::queue<Ticket*> copy = items;
-    std::string result;
-
-    while (!copy.empty())
+    if (head == nullptr)
     {
-        if (!result.empty()) result += " ";
-        result += std::to_string(copy.front()->getRID());
-        copy.pop();
+        std::cout << "-\n";
+        return;
     }
-    return result;
-}
 
-void WaitingSRQueue::print()
-{
-    // a std::queue can't be looped over, so we copy it first
-    std::queue<Ticket*> copy = items;
-    while (!copy.empty())
+    Node* current = head;
+    while (current != nullptr)
     {
-        std::cout << copy.front()->getRID() << " ";
-        copy.pop();
+        std::cout << current->data->getRID();
+        if (current->next != nullptr) std::cout << " ";
+        current = current->next;
     }
     std::cout << "\n";
 }

@@ -1,5 +1,5 @@
 CXX      ?= g++
-CXXFLAGS ?= -std=c++17 -Wall -Wextra
+CXXFLAGS ?= -std=c++11 -Wall -Wextra
 TARGET   ?= it_system
 
 # plain g++ build: all sources in one command, no extra tooling needed

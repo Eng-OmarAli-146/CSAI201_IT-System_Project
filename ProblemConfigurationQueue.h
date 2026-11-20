@@ -1,11 +1,25 @@
 #pragma once
 #include <string>
-#include <vector>
 #include "ServiceConfiguration.h"
-class ProblemConfigurationQueue {
+
+// Hand-written linked FIFO queue of service configurations.
+// Problem code "pc" is the position of the configuration in this list (1, 2, 3, ...).
+class ProblemConfigurationQueue
+{
 private:
-    std::vector<ServiceConfiguration> configurations;
+    struct Node
+    {
+        ServiceConfiguration data;
+        Node* next;
+    };
+
+    Node* head;
+    Node* tail;
+    int count;
+
 public:
+    ProblemConfigurationQueue();
+
     void insertConfiguration(const ServiceConfiguration& configuration);
     const ServiceConfiguration* getConfigurationByPC(int pc) const;
     int getDuration(int pc) const;

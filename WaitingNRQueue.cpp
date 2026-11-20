@@ -1,56 +1,92 @@
 #include "WaitingNRQueue.h"
 #include <iostream>
 
+WaitingNRQueue::WaitingNRQueue() : head(nullptr), tail(nullptr), count(0) {}
+
 void WaitingNRQueue::enqueue(Ticket* t)
 {
-    items.push_back(t);
+    Node* node = new Node;
+    node->data = t;
+    node->next = nullptr;
+
+    if (tail == nullptr)
+    {
+        head = node;
+        tail = node;
+    }
+    else
+    {
+        tail->next = node;
+        tail = node;
+    }
+    count++;
 }
 
 Ticket* WaitingNRQueue::dequeue()
 {
-    if (items.empty()) return nullptr;
-    Ticket* t = items.front();
-    items.pop_front();
+    if (head == nullptr) return nullptr;
+
+    Node* node = head;
+    Ticket* t = node->data;
+
+    head = head->next;
+    if (head == nullptr) tail = nullptr;
+
+    delete node;
+    count--;
     return t;
 }
 
-Ticket* WaitingNRQueue::peek()
+Ticket* WaitingNRQueue::peek() const
 {
-    if (items.empty()) return nullptr;
-    return items.front();
+    if (head == nullptr) return nullptr;
+    return head->data;
 }
 
 Ticket* WaitingNRQueue::removeByID(int RID)
 {
-    for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)
+    Node* previous = nullptr;
+    Node* current = head;
+
+    while (current != nullptr)
     {
-        if ((*it)->getRID() == RID)
+        if (current->data->getRID() == RID)
         {
-            Ticket* t = *it;
-            items.erase(it);
-            return t;
+            Ticket* found = current->data;
+
+            if (previous == nullptr) head = current->next;
+            else                     previous->next = current->next;
+
+            if (current == tail) tail = previous;
+
+            delete current;
+            count--;
+            return found;
         }
+        previous = current;
+        current = current->next;
     }
     return nullptr;
 }
 
-bool WaitingNRQueue::isEmpty()  { return items.empty(); }
-int  WaitingNRQueue::getCount() { return items.size(); }
+bool WaitingNRQueue::isEmpty() const { return count == 0; }
 
-std::string WaitingNRQueue::getIDs()
+int WaitingNRQueue::getCount() const { return count; }
+
+void WaitingNRQueue::printIDs() const
 {
-    std::string result;
-    for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)
+    if (head == nullptr)
     {
-        if (!result.empty()) result += " ";
-        result += std::to_string((*it)->getRID());
+        std::cout << "-\n";
+        return;
     }
-    return result;
-}
 
-void WaitingNRQueue::print()
-{
-    for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)
-        std::cout << (*it)->getRID() << " ";
+    Node* current = head;
+    while (current != nullptr)
+    {
+        std::cout << current->data->getRID();
+        if (current->next != nullptr) std::cout << " ";
+        current = current->next;
+    }
     std::cout << "\n";
 }

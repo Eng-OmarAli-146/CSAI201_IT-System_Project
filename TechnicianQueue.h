@@ -1,15 +1,29 @@
 #pragma once
-#include <vector>
 #include "Technician.h"
-class TechnicianQueue {
+
+// Hand-written linked FIFO queue of the technicians of the IT unit.
+class TechnicianQueue
+{
 private:
-    std::vector<Technician> technicians;
+    struct Node
+    {
+        Technician data;
+        Node* next;
+    };
+
+    Node* head;
+    Node* tail;
+    int count;
+
 public:
-    void insertTechnician(const Technician& technician);
+    TechnicianQueue();
+
+    void        insertTechnician(const Technician& technician);
     Technician* getTechnicianByID(int id);
-    const Technician* getTechnicianByID(int id) const;
-    std::vector<Technician*> getAllTechnicians();
-    bool updateTechnician(int id, const Technician& technician);
-    void printWorkingTechnicians() const;
-    int size() const;
+    bool        updateTechnician(int id, const Technician& technician);
+    void        printWorkingTechnicians() const;
+    int         size() const;
+
+    // copies pointers to the technicians into a new array (the caller owns it)
+    Technician** toArray(int& size);
 };

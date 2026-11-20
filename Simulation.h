@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <string>
 #include "Definitions.h"
 #include "Ticket.h"
 #include "Technician.h"
@@ -11,21 +11,29 @@
 #include "AvailableGTQueue.h"
 #include "AvailableSTQueue.h"
 #include "ProblemConfigurationQueue.h"
+#include "LocationManager.h"
+#include "TicketQueue.h"
 #include "Scheduler.h"
 
 class Simulation
 {
-    int CurrentTime;
-    int Mode;                       // 1 = Interactive, 2 = Silent
-    ProblemConfigurationQueue* configs;
-    int locationCount;
+    int  CurrentTime;
+    bool interactive;                       // true = Interactive, false = Silent
+    const ProblemConfigurationQueue* configs;
+    const LocationManager*           locations;
+    std::string outputFileName;
 
-    // from InputReader
-    std::vector<Ticket*>             allRequests;
-    std::vector<CancellationRequest> allCancellations;
-    std::vector<Technician*>         technicians;
-    size_t nextRequest;
-    size_t nextCancel;
+    // data received from the InputReader
+    Ticket**              allRequests;
+    int                   requestCount;
+    int                   nextRequest;
+    CancellationRequest*  allCancellations;
+    int                   cancellationCount;
+    int                   nextCancel;
+    Technician**          technicians;
+    int                   technicianCount;
+    int                   stCount;
+    int                   gtCount;
 
     // structures (declaration order matters: used by the two objects below)
     WaitingNRQueue         waitingNR;
@@ -34,19 +42,24 @@ class Simulation
     InServiceList          inService;
     AvailableGTQueue       availableGT;
     AvailableSTQueue       availableST;
-    std::vector<Ticket*>   completed;
-    std::vector<Ticket*>   cancelled;
+    TicketQueue            completed;
+    TicketQueue            cancelled;
 
     Scheduler           scheduler;
     CancellationManager cancelManager;
 
+    bool CannotBeServed();
+
 public:
-    Simulation(std::vector<Ticket*> requests,
-               std::vector<CancellationRequest> cancellations,
-               std::vector<Technician*> techs,
-               ProblemConfigurationQueue* configs,
-               int locationCount,
-               int mode);
+    Simulation(Ticket** requests, int requestCount,
+               CancellationRequest* cancellations, int cancellationCount,
+               Technician** techs, int technicianCount,
+               const ProblemConfigurationQueue* configs,
+               const LocationManager* locations,
+               bool interactive,
+               const std::string& outputFileName);
+
+    ~Simulation();
 
     void Run();
     void CompleteServices();

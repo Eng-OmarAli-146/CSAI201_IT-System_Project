@@ -1,4 +1,5 @@
 #pragma once
+
 enum class RequestType {
     NR,
     SR,
@@ -14,4 +15,11 @@ enum class TicketStatus {
     IN_SERVICE,
     COMPLETED,
     CANCELLED
+};
+
+// one cancellation record read from the input file (CT = cancellation time)
+struct CancellationRequest
+{
+    int CT;
+    int RID;
 };

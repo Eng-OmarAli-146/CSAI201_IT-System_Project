@@ -1,15 +1,53 @@
 #include "ProblemConfigurationQueue.h"
-void ProblemConfigurationQueue::insertConfiguration(const ServiceConfiguration& c) { configurations.push_back(c); }
-const ServiceConfiguration* ProblemConfigurationQueue::getConfigurationByPC(int pc) const {
-    for (const auto& c : configurations)
-        if (c.getPC() == pc) return &c;
+
+ProblemConfigurationQueue::ProblemConfigurationQueue()
+    : head(nullptr), tail(nullptr), count(0) {}
+
+void ProblemConfigurationQueue::insertConfiguration(const ServiceConfiguration& configuration)
+{
+    Node* node = new Node;
+    node->data = configuration;
+    node->next = nullptr;
+
+    if (tail == nullptr)
+    {
+        head = node;
+        tail = node;
+    }
+    else
+    {
+        tail->next = node;
+        tail = node;
+    }
+    count++;
+}
+
+const ServiceConfiguration* ProblemConfigurationQueue::getConfigurationByPC(int pc) const
+{
+    Node* current = head;
+    int position = 1;
+
+    while (current != nullptr)
+    {
+        if (position == pc) return &current->data;
+        current = current->next;
+        position++;
+    }
     return nullptr;
 }
-int ProblemConfigurationQueue::getDuration(int pc) const {
-    const auto* c = getConfigurationByPC(pc); return c ? c->getDuration() : 0;
-}
-std::string ProblemConfigurationQueue::getCategory(int pc) const {
-    const auto* c = getConfigurationByPC(pc); return c ? c->getCategory() : "";
-}
-int ProblemConfigurationQueue::size() const { return static_cast<int>(configurations.size()); }
 
+int ProblemConfigurationQueue::getDuration(int pc) const
+{
+    const ServiceConfiguration* configuration = getConfigurationByPC(pc);
+    if (configuration == nullptr) return 0;
+    return configuration->getDuration();
+}
+
+std::string ProblemConfigurationQueue::getCategory(int pc) const
+{
+    const ServiceConfiguration* configuration = getConfigurationByPC(pc);
+    if (configuration == nullptr) return std::string("");
+    return configuration->getCategory();
+}
+
+int ProblemConfigurationQueue::size() const { return count; }

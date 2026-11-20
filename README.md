@@ -13,7 +13,7 @@ requests (UR) are served by priority by either type.
 |---|---|
 | Enumerations / shared types | `Definitions.h` |
 | Domain entities | `Ticket`, `Technician`, `Location`, `ServiceConfiguration`, `CancellationRequest` |
-| Containers | `WaitingNRQueue`, `WaitingSRQueue`, `WaitingURPriorityQueue`, `InServiceList`, `AvailableGTQueue`, `AvailableSTQueue`, `TechnicianQueue`, `ProblemConfigurationQueue`, `LocationManager` |
+| Containers (all hand-written) | `TicketQueue`, `CancellationQueue`, `WaitingNRQueue`, `WaitingSRQueue`, `WaitingURPriorityQueue`, `InServiceList`, `AvailableGTQueue`, `AvailableSTQueue`, `TechnicianQueue`, `ProblemConfigurationQueue`, `LocationManager` |
 | Engine | `Scheduler`, `CancellationManager`, `Simulation` |
 | I/O | `InputReader`, `OutputWriter`, `Statistics` |
 | Entry point | `main.cpp` |
@@ -23,7 +23,7 @@ requests (UR) are served by priority by either type.
 Plain C++ — just a g++ compiler, no CMake and no extra tools:
 
 ```bash
-g++ -std=c++17 *.cpp -o it_system
+g++ -std=c++11 -Wall -Wextra *.cpp -o it_system
 ```
 
 Or with the included Makefile (which runs exactly the same command):
@@ -37,12 +37,24 @@ make clean    # remove the executable
 ## Run
 
 ```bash
-./it_system          # start from the directory that contains input.txt
+./it_system
 ```
 
-Choose `1` for the step-by-step interactive trace or `2` for silent mode. In
-silent mode only the final report is printed. Results are written to
-`output.txt` in the current directory.
+The program then asks for three things (press Enter to accept the default):
+
+```
+Choose mode [I=Interactive, S=Silent]: I
+Enter input file name [input.txt]: input.txt
+Enter output file name [output.txt]: output.txt
+```
+
+Interactive mode prints the state of the IT unit at every minute and waits for
+Enter; silent mode prints only `Silent Mode`, `Simulation Starts...` and
+`Simulation ends, Output file created.` Both modes write exactly the same
+output file.
+
+No STL container is used: every queue is a hand-written linked list and every
+heap is a hand-written array based binary heap.
 
 ## Input format (`input.txt`)
 
@@ -71,11 +83,9 @@ A table of completed tickets sorted by ascending `FT`, then `RID`:
 
 ```
 FT RID QT WT ST AT TID LID
-```
-
-followed by the report:
-
-```
+4 1 1 0 1 1 3 1
+4 3 1 0 1 1 2 3
+6 2 1 0 1 1 1 2
 Requests: 4 [NR: 2, SR: 1, UR: 1]
 Completed: 3 [NR: 1, SR: 1, UR: 1]
 Cancelled: 1
@@ -86,9 +96,15 @@ Average resolution time: 3.67
 Average busy time: 3.67
 Simulation time: 6
 Average utilisation: 61.11%
-
 Individual busy times: technician 1 = 5; technician 2 = 3; technician 3 = 3. Total = 11 minutes.
+
+Tickets by location:
+Location 1: 1
+Location 2: 2
+Location 3: 1
 ```
 
-Averages and percentages are printed to two decimal places. The same file is
-produced in both modes.
+Averages and percentages are printed with two decimal places. `WT = ST - QT`
+and resolution time = `FT - QT`; cancelled tickets are excluded from both.
+Averages are `0.00` when nothing completed, and utilisation is `0.00` when
+there are no technicians.
