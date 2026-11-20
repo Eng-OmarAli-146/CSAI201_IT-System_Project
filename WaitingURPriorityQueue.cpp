@@ -46,6 +46,26 @@ Ticket* WaitingURPriorityQueue::peekHighest()
 bool WaitingURPriorityQueue::isEmpty()  { return items.empty(); }
 int  WaitingURPriorityQueue::getCount() { return items.size(); }
 
+std::string WaitingURPriorityQueue::getIDs()
+{
+    // same order the scheduler would serve them in
+    std::vector<Ticket*> remaining = items;
+    std::string result;
+
+    while (!remaining.empty())
+    {
+        int best = 0;
+        for (int i = 1; i < (int)remaining.size(); i++)
+            if (isBetter(remaining[i], remaining[best]))
+                best = i;
+
+        if (!result.empty()) result += " ";
+        result += std::to_string(remaining[best]->getRID());
+        remaining.erase(remaining.begin() + best);
+    }
+    return result;
+}
+
 void WaitingURPriorityQueue::print()
 {
     for (size_t i = 0; i < items.size(); i++)

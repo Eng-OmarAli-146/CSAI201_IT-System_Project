@@ -31,6 +31,13 @@ Ticket* InServiceList::peek()
     return items.front();
 }
 
+Ticket* InServiceList::getByID(int RID)
+{
+    for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)
+        if ((*it)->getRID() == RID) return *it;
+    return nullptr;
+}
+
 Ticket* InServiceList::removeByID(int RID)
 {
     for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)

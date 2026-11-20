@@ -37,6 +37,17 @@ Ticket* WaitingNRQueue::removeByID(int RID)
 bool WaitingNRQueue::isEmpty()  { return items.empty(); }
 int  WaitingNRQueue::getCount() { return items.size(); }
 
+std::string WaitingNRQueue::getIDs()
+{
+    std::string result;
+    for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)
+    {
+        if (!result.empty()) result += " ";
+        result += std::to_string((*it)->getRID());
+    }
+    return result;
+}
+
 void WaitingNRQueue::print()
 {
     for (std::list<Ticket*>::iterator it = items.begin(); it != items.end(); ++it)

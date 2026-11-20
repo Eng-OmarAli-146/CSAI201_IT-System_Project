@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "Ticket.h"
 
 class WaitingURPriorityQueue
@@ -16,4 +17,5 @@ public:
     bool    isEmpty();
     int     getCount();
     void    print();
+    std::string getIDs();          // ticket IDs in scheduling order
 };

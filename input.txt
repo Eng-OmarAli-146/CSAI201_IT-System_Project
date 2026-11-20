@@ -1,23 +1,14 @@
 3
-1 Giza
-2 Dokki
-3 Maadi
+CSAI LAB1 ADMIN
 3
-1 Hardware 4
-2 Software 3
-3 Network 2
+B 3
+B 4
+H 5
+1 2
 4
-1 GT
-2 GT
-3 ST
-4 ST
-6
-1 1 1 1 1 NR
-2 1 2 2 1 SR
-3 2 3 3 2 UR
-4 4 1 3 1 NR
-5 6 2 1 3 UR
-6 9 3 2 1 SR
-2
-3 1
-5 4
+NR 1 1 1 1
+SR 1 2 2 3
+UR 1 3 3 1 9
+NR 2 4 2 1
+1
+3 4

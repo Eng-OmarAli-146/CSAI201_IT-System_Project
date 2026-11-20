@@ -33,10 +33,10 @@ bool InputReader::LoadLocations(std::istream& input) {
     int count;
     if (!(input >> count) || count < 0) return false;
     for (int i = 0; i < count; ++i) {
-        int id;
         std::string name;
-        if (!(input >> id >> name)) return false;
-        locations.addLocation(Location(id, name));
+        if (!(input >> name)) return false;
+        // LID is the row number: locations are numbered 1..count
+        locations.addLocation(Location(i + 1, name));
     }
     return true;
 }
@@ -44,32 +44,42 @@ bool InputReader::LoadConfigurations(std::istream& input) {
     int count;
     if (!(input >> count) || count < 0) return false;
     for (int i = 0; i < count; ++i) {
-        int pc, duration;
+        int duration;
         std::string category;
-        if (!(input >> pc >> category >> duration)) return false;
-        configurations.insertConfiguration(ServiceConfiguration(pc, category, duration));
+        if (!(input >> category >> duration)) return false;
+        // problem codes are assigned by table row, starting at 1
+        configurations.insertConfiguration(ServiceConfiguration(i + 1, category, duration));
     }
     return true;
 }
 bool InputReader::LoadTechnicians(std::istream& input) {
-    int count;
-    if (!(input >> count) || count < 0) return false;
-    for (int i = 0; i < count; ++i) {
-        int id;
-        std::string type;
-        if (!(input >> id >> type)) return false;
-        technicians.insertTechnician(Technician(id, parseTechnicianType(type)));
-    }
+    int stCount, gtCount;
+    if (!(input >> stCount >> gtCount) || stCount < 0 || gtCount < 0) return false;
+
+    // technician IDs increase, with all ST technicians first and then all GT
+    int id = 1;
+    for (int i = 0; i < stCount; ++i)
+        technicians.insertTechnician(Technician(id++, TechnicianType::ST));
+    for (int i = 0; i < gtCount; ++i)
+        technicians.insertTechnician(Technician(id++, TechnicianType::GT));
     return true;
 }
 bool InputReader::LoadRequests(std::istream& input) {
     int count;
     if (!(input >> count) || count < 0) return false;
     for (int i = 0; i < count; ++i) {
-        int rid, qt, lid, pc, pr;
         std::string type;
-        if (!(input >> rid >> qt >> lid >> pc >> pr >> type)) return false;
-        allRequests.emplace_back(rid, qt, lid, pc, pr, parseRequestType(type));
+        if (!(input >> type)) return false;
+
+        RequestType requestType = parseRequestType(type);
+
+        int qt, rid, lid, pc;
+        if (!(input >> qt >> rid >> lid >> pc)) return false;
+
+        int pr = 0;                                  // only UR requests carry a priority
+        if (requestType == RequestType::UR && !(input >> pr)) return false;
+
+        allRequests.emplace_back(rid, qt, lid, pc, pr, requestType);
     }
     return true;
 }
@@ -106,4 +116,3 @@ std::vector<CancellationRequest> InputReader::getAllCancellations() {
     }
     return result;
 }
-

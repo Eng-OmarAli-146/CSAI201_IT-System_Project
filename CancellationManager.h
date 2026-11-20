@@ -28,7 +28,7 @@ public:
         : waitingNR(w), inService(s), availableGT(g), availableST(st),
           technicians(t), cancelled(c) {}
 
-    bool CancelTicket(int RID);
+    bool CancelTicket(int RID, int currentTime);
     bool CancelWaitingNR(int RID);
-    bool CancelAssignedNR(int RID);
+    bool CancelAssignedNR(int RID, int currentTime);
 };

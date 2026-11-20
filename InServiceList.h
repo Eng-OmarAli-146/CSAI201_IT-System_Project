@@ -11,6 +11,7 @@ public:
     void    insert(Ticket* t);
     Ticket* removeFirst();
     Ticket* peek();
+    Ticket* getByID(int RID);      // nullptr if not found
     Ticket* removeByID(int RID);   // nullptr if not found
     bool    isEmpty();
     void    print();
