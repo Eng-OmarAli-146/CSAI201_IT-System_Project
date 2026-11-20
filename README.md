@@ -20,17 +20,18 @@ requests (UR) are served by priority by either type.
 
 ## Build
 
-With CMake:
+Plain C++ — just a g++ compiler, no CMake and no extra tools:
 
 ```bash
-cmake -S . -B build
-cmake --build build
+g++ -std=c++17 *.cpp -o it_system
 ```
 
-or with plain make:
+Or with the included Makefile (which runs exactly the same command):
 
 ```bash
-make
+make          # build
+make run      # build + run
+make clean    # remove the executable
 ```
 
 ## Run

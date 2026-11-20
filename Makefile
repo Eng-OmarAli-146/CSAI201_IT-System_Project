@@ -1,26 +1,17 @@
 CXX      ?= g++
 CXXFLAGS ?= -std=c++17 -Wall -Wextra
 TARGET   ?= it_system
-BUILD    := build
 
-SRC := $(wildcard *.cpp)
-OBJ := $(addprefix $(BUILD)/,$(SRC:.cpp=.o))
-
+# plain g++ build: all sources in one command, no extra tooling needed
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)
-
-$(BUILD)/%.o: %.cpp | $(BUILD)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD):
-	mkdir -p $(BUILD)
+$(TARGET): $(wildcard *.cpp) $(wildcard *.h)
+	$(CXX) $(CXXFLAGS) $(wildcard *.cpp) -o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm -rf $(BUILD) $(TARGET)
+	rm -f $(TARGET)
 
 .PHONY: all run clean
