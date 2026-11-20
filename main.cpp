@@ -17,6 +17,7 @@ int main()
                    reader.getAllCancellations(),
                    reader.getTechnicians(),
                    reader.getConfigurations(),
+                   reader.getLocations().size(),
                    mode);
     sim.Run();
 

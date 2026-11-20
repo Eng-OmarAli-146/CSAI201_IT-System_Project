@@ -17,6 +17,8 @@ class Simulation
 {
     int CurrentTime;
     int Mode;                       // 1 = Interactive, 2 = Silent
+    ProblemConfigurationQueue* configs;
+    int locationCount;
 
     // from InputReader
     std::vector<Ticket*>             allRequests;
@@ -43,6 +45,7 @@ public:
                std::vector<CancellationRequest> cancellations,
                std::vector<Technician*> techs,
                ProblemConfigurationQueue* configs,
+               int locationCount,
                int mode);
 
     void Run();

@@ -47,34 +47,48 @@ silent mode only the final report is printed. Results are written to
 ## Input format (`input.txt`)
 
 ```
-<number of locations>
-<LID> <name>
-...
-<number of problem configurations>
-<PC> <category> <duration>
-...
-<number of technicians>
-<TID> GT|ST
-...
-<number of requests>
-<RID> <QT> <LID> <PC> <PR> NR|SR|UR
-...
-<number of cancellations>
+<L>                          number of university locations
+<name> ...                   L location codes/names (one token each; LID = row number)
+<K>                          number of problem configurations
+<category> <duration>        K rows; category is B or H (PC = row number, starting at 1)
+<ST_count> <GT_count>        technicians of the centralized IT unit
+<R>                          number of requests
+<TYPE> <QT> <RID> <LID> <PC> [<PR>]
+<C>                          number of cancellations
 <CT> <RID>
 ```
 
-* `QT` queue (arrival) time, `PR` priority (higher is more urgent), `CT`
-  cancellation time.
-* Requests are released in the order they appear, so they must be listed in
-  non-decreasing `QT` order.
-* Every `PC` used by a request should exist in the configuration section, and a
-  GT technician must be available for NR requests so that no queue is starved.
+* `TYPE` is `NR`, `SR` or `UR`; only `UR` records carry the extra priority `PR`.
+* Technician IDs are assigned automatically: all ST technicians first, then all GT.
+* `QT` = request time, `CT` = cancellation time; records are sorted by time and keep
+  file order for equal times.
+* NR/UR must refer to a category `B` problem code, SR to category `H`.
+* Only NR tickets can be cancelled; SR, UR, completed and unknown IDs are ignored.
 
 ## Output format (`output.txt`)
+
+A table of completed tickets sorted by ascending `FT`, then `RID`:
 
 ```
 FT RID QT WT ST AT TID LID
 ```
 
-followed by a summary block (completed/cancelled counts, average waiting time,
-average response time, total busy time and technician utilization).
+followed by the report:
+
+```
+Requests: 4 [NR: 2, SR: 1, UR: 1]
+Completed: 3 [NR: 1, SR: 1, UR: 1]
+Cancelled: 1
+Locations: 3
+Technicians: 3 [Specialist: 1, General: 2]
+Average waiting time: 0.00
+Average resolution time: 3.67
+Average busy time: 3.67
+Simulation time: 6
+Average utilisation: 61.11%
+
+Individual busy times: technician 1 = 5; technician 2 = 3; technician 3 = 3. Total = 11 minutes.
+```
+
+Averages and percentages are printed to two decimal places. The same file is
+produced in both modes.

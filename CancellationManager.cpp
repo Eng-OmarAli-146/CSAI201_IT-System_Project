@@ -1,10 +1,12 @@
 #include "CancellationManager.h"
 
-bool CancellationManager::CancelTicket(int RID)
+// Only NR tickets may be cancelled; unknown IDs, completed, cancelled,
+// SR and UR tickets are ignored (handled by the two checks below).
+bool CancellationManager::CancelTicket(int RID, int currentTime)
 {
     if (CancelWaitingNR(RID))
         return true;
-    return CancelAssignedNR(RID);   // else: ignore
+    return CancelAssignedNR(RID, currentTime);   // else: ignore
 }
 
 bool CancellationManager::CancelWaitingNR(int RID)
@@ -17,16 +19,21 @@ bool CancellationManager::CancelWaitingNR(int RID)
     return true;
 }
 
-bool CancellationManager::CancelAssignedNR(int RID)
+bool CancellationManager::CancelAssignedNR(int RID, int currentTime)
 {
-    Ticket* t = inService->removeByID(RID);
-    if (!t) return false;
+    Ticket* t = inService->getByID(RID);
+    if (!t) return false;                            // finished or unknown
+    if (t->getType() != RequestType::NR) return false;  // SR / UR are ignored
+
+    inService->removeByID(RID);
 
     for (std::size_t i = 0; i < technicians->size(); i++)
     {
         Technician* tech = (*technicians)[i];
         if (tech->getID() == t->getTID())
         {
+            // busy interval runs from AT until the technician is released
+            tech->addBusyTime(currentTime - t->getAT());
             tech->releaseTicket();
             if (tech->getType() == TechnicianType::GT)
                 availableGT->returnGT(tech);

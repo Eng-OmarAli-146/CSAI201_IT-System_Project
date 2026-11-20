@@ -23,6 +23,21 @@ Ticket* WaitingSRQueue::peek()
 bool WaitingSRQueue::isEmpty()  { return items.empty(); }
 int  WaitingSRQueue::getCount() { return items.size(); }
 
+std::string WaitingSRQueue::getIDs()
+{
+    // a std::queue can't be looped over, so we copy it first
+    std::queue<Ticket*> copy = items;
+    std::string result;
+
+    while (!copy.empty())
+    {
+        if (!result.empty()) result += " ";
+        result += std::to_string(copy.front()->getRID());
+        copy.pop();
+    }
+    return result;
+}
+
 void WaitingSRQueue::print()
 {
     // a std::queue can't be looped over, so we copy it first

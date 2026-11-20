@@ -1,11 +1,23 @@
 #include "OutputWriter.h"
+#include <algorithm>
+
+// completed rows are sorted by ascending FT, then ascending RID
+static bool ComesFirst(Ticket* a, Ticket* b)
+{
+    if (a->getFT() != b->getFT()) return a->getFT() < b->getFT();
+    return a->getRID() < b->getRID();
+}
 
 void OutputWriter::WriteCompletedTickets()
 {
     out << "FT RID QT WT ST AT TID LID\n";
-    for (size_t i = 0; i < completed->size(); i++)
+
+    std::vector<Ticket*> rows = *completed;
+    std::sort(rows.begin(), rows.end(), ComesFirst);
+
+    for (size_t i = 0; i < rows.size(); i++)
     {
-        Ticket* t = (*completed)[i];
+        Ticket* t = rows[i];
         out << t->getFT() << " " << t->getRID() << " " << t->getQT() << " "
             << t->getST() - t->getQT() << " "
             << t->getST() << " " << t->getAT() << " "
@@ -15,12 +27,8 @@ void OutputWriter::WriteCompletedTickets()
 
 void OutputWriter::WriteStatistics()
 {
-    out << "\nCompleted Count: " << stats->getCompletedCount()
-        << "\nCancelled Count: " << stats->getCancelledCount()
-        << "\nAverage WT: "      << stats->CalculateAverageWT()
-        << "\nAverage RT: "      << stats->CalculateAverageRT()
-        << "\nBusy Time: "       << stats->CalculateBusyTime()
-        << "\nUtilization: "     << stats->CalculateUtilization() << " %\n";
+    out << "\n";
+    stats->GenerateReport(out);
 }
 
 void OutputWriter::WriteOutputFile()
