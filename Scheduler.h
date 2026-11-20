@@ -12,18 +12,18 @@
 
 class Scheduler
 {
-    WaitingNRQueue*            waitingNR;
-    WaitingSRQueue*            waitingSR;
-    WaitingURPriorityQueue*    waitingUR;
-    InServiceList*             inService;
-    AvailableGTQueue*          availableGT;
-    AvailableSTQueue*          availableST;
-    ProblemConfigurationQueue* configs;
+    WaitingNRQueue*                  waitingNR;
+    WaitingSRQueue*                  waitingSR;
+    WaitingURPriorityQueue*          waitingUR;
+    InServiceList*                   inService;
+    AvailableGTQueue*                availableGT;
+    AvailableSTQueue*                availableST;
+    const ProblemConfigurationQueue* configs;
 
 public:
     Scheduler(WaitingNRQueue* nr, WaitingSRQueue* sr, WaitingURPriorityQueue* ur,
               InServiceList* srv, AvailableGTQueue* gt, AvailableSTQueue* st,
-              ProblemConfigurationQueue* cfg)
+              const ProblemConfigurationQueue* cfg)
         : waitingNR(nr), waitingSR(sr), waitingUR(ur), inService(srv),
           availableGT(gt), availableST(st), configs(cfg) {}
 

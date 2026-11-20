@@ -1,35 +1,40 @@
 #pragma once
-#include <iosfwd>
+#include <iostream>
 #include <string>
-#include <utility>
-#include <vector>
 #include "Definitions.h"
-#include "CancellationManager.h"   // CancellationRequest
 #include "LocationManager.h"
 #include "ProblemConfigurationQueue.h"
 #include "TechnicianQueue.h"
 #include "Ticket.h"
-class InputReader {
+#include "TicketQueue.h"
+#include "CancellationQueue.h"
+
+// Reads the input file and keeps every record in the structure that suits it.
+class InputReader
+{
 private:
     std::string fileName;
-    LocationManager locations;
+    LocationManager           locations;
     ProblemConfigurationQueue configurations;
-    TechnicianQueue technicians;
-    std::vector<Ticket> allRequests;
-    std::vector<std::pair<int, int>> allCancellations; // {time, RID}
+    TechnicianQueue           technicians;
+    TicketQueue               allRequests;
+    CancellationQueue         allCancellations;
+
     static RequestType parseRequestType(const std::string& value);
-    static TechnicianType parseTechnicianType(const std::string& value);
+
 public:
-    explicit InputReader(const std::string& fileName = "input.txt");
+    explicit InputReader(const std::string& fileName);
+
     bool LoadFile();
     bool LoadLocations(std::istream& input);
     bool LoadConfigurations(std::istream& input);
     bool LoadTechnicians(std::istream& input);
     bool LoadRequests(std::istream& input);
     bool LoadCancellations(std::istream& input);
-    const LocationManager& getLocations() const;
+
+    const LocationManager&     getLocations() const;
     ProblemConfigurationQueue* getConfigurations();
-    std::vector<Technician*> getTechnicians();
-    std::vector<Ticket*> getAllRequests();
-    std::vector<CancellationRequest> getAllCancellations();
+    Technician**               getTechnicians(int& count);
+    TicketQueue&               getAllRequests();
+    CancellationQueue&         getAllCancellations();
 };

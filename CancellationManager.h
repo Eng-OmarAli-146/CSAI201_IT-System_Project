@@ -1,32 +1,29 @@
 #pragma once
-#include <vector>
+#include "Definitions.h"
 #include "Ticket.h"
 #include "Technician.h"
 #include "WaitingNRQueue.h"
 #include "InServiceList.h"
 #include "AvailableGTQueue.h"
 #include "AvailableSTQueue.h"
-
-struct CancellationRequest
-{
-    int CT;
-    int RID;
-};
+#include "TicketQueue.h"
 
 class CancellationManager
 {
-    WaitingNRQueue*           waitingNR;
-    InServiceList*            inService;
-    AvailableGTQueue*         availableGT;
-    AvailableSTQueue*         availableST;
-    std::vector<Technician*>* technicians;
-    std::vector<Ticket*>*     cancelled;
+    WaitingNRQueue*   waitingNR;
+    InServiceList*    inService;
+    AvailableGTQueue* availableGT;
+    AvailableSTQueue* availableST;
+    Technician**      technicians;
+    int               technicianCount;
+    TicketQueue*      cancelled;
 
 public:
     CancellationManager(WaitingNRQueue* w, InServiceList* s, AvailableGTQueue* g,
-                        AvailableSTQueue* st, std::vector<Technician*>* t, std::vector<Ticket*>* c)
+                        AvailableSTQueue* st, Technician** t, int count,
+                        TicketQueue* c)
         : waitingNR(w), inService(s), availableGT(g), availableST(st),
-          technicians(t), cancelled(c) {}
+          technicians(t), technicianCount(count), cancelled(c) {}
 
     bool CancelTicket(int RID, int currentTime);
     bool CancelWaitingNR(int RID);

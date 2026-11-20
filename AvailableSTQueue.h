@@ -1,15 +1,25 @@
 #pragma once
-#include <list>
 #include "Technician.h"
 
-// Always sorted by smallest ID first
+// Hand-written array based min-heap of the available specialist technicians.
+// The smallest technician ID is always on top.
 class AvailableSTQueue
 {
-    std::list<Technician*> items;
+private:
+    Technician** items;
+    int count;
+    int capacity;
+
+    void grow();
+    void siftUp(int index);
+    void siftDown(int index);
 
 public:
+    AvailableSTQueue();
+
     void        insertST(Technician* t);
     Technician* getST();               // takes the smallest ID
     void        returnST(Technician* t);
-    bool        isEmpty();
+    bool        isEmpty() const;
+    int         getCount() const;
 };
